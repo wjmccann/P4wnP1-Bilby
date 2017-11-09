@@ -1,0 +1,9 @@
+GUI r
+DELAY 500
+STRING powershell -c "Start-Process cmd -verb runas"
+ENTER
+DELAY 2500
+LEFTARROW
+DELAY 500
+ENTER
+DELAY 2000

